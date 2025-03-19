@@ -4,7 +4,7 @@
 ![teaser](./assets/teaser.jpg)
 
 > [Multi-view Reconstruction via SfM-guided Monocular Depth Estimation](https://zju3dv.github.io/murre)  
-> [Haoyu Guo](https://github.com/ghy0324)<sup>\*</sup>, [He Zhu](https://ada4321.github.io/)<sup>\*</sup>, [Sida Peng](https://pengsida.net), [Haotong Lin](https://haotongl.github.io/), [Yunzhi Yan](https://yunzhiy.github.io/), [Tao Xie](https://github.com/xbillowy), [Wenguan Wang](https://sites.google.com/view/wenguanwang), [Xiaowei Zhou](https://xzhou.me), [Hujun Bao](http://www.cad.zju.edu.cn/home/bao/)
+> [Haoyu Guo](https://github.com/ghy0324)<sup>\*</sup>, [He Zhu](https://ada4321.github.io/)<sup>\*</sup>, [Sida Peng](https://pengsida.net), [Haotong Lin](https://haotongl.github.io/), [Yunzhi Yan](https://yunzhiy.github.io/), [Tao Xie](https://github.com/xbillowy), [Wenguan Wang](https://sites.google.com/view/wenguanwang), [Xiaowei Zhou](https://xzhou.me), [Hujun Bao](http://www.cad.zju.edu.cn/home/bao/)  
 > CVPR 2025
 
 ## We’re still working on open sourcing the code. Please stay tuned.
