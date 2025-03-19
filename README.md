@@ -1,5 +1,5 @@
 # Multi-view Reconstruction via SfM-guided Monocular Depth Estimation
-### [Project Page](https://zju3dv.github.io/murre) | [Paper](https://ghy0324.github.io/project_page_assets/murre/main.pdf)
+### [Project Page](https://zju3dv.github.io/murre) | [Paper](https://arxiv.org/pdf/2503.14483)
 
 ![teaser](./assets/teaser.jpg)
 
