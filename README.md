@@ -22,7 +22,7 @@ conda env create -f environment.yml
 ```
 
 ## Checkpoint
-The pretrained model weights can be downloaded from this [link]().
+The pretrained model weights can be downloaded from [here](https://drive.google.com/file/d/1gcThkgOQRmjAxhGJRV7SwzwXKBWP1cDa/view?usp=sharing).
 
 
 ## Inference
