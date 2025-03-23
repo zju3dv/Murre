@@ -25,8 +25,7 @@ def rescale_intrinsic(ixt, scale):
 def read_ixt_ext_hw_pointid(cams, images, points):
     # get image ids
     name2imageid = {img.name:img.id for img in images.values()}
-    names = [img.name for img in images.values()]
-    names.sort(key=lambda _:int(_[:-4]))
+    names = sorted([img.name for img in images.values()])
     imageids = [name2imageid[name] for name in names]
 
     # ixts
