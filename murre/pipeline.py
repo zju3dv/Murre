@@ -1,24 +1,3 @@
-# Copyright 2023 Bingxin Ke, ETH Zurich. All rights reserved.
-# Last modified: 2024-05-24
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# --------------------------------------------------------------------------
-# If you find this code useful, we kindly ask you to cite our paper in your work.
-# Please find bibtex at: https://github.com/prs-eth/Marigold#-citation
-# More information about the method can be found at https://marigoldmonodepth.github.io
-# --------------------------------------------------------------------------
-
-
 import logging
 from typing import Dict, Optional, Union
 
@@ -51,9 +30,9 @@ from .util.image_util import (
 from .util.depth_util import normalize_depth, interp_depth, renorm_depth, align_depth
 
 
-class MarigoldDepthOutput(BaseOutput):
+class MurreDepthOutput(BaseOutput):
     """
-    Output class for Marigold monocular depth prediction pipeline.
+    Output class for Murre monocular depth prediction pipeline.
 
     Args:
         depth_np (`np.ndarray`):
@@ -69,9 +48,9 @@ class MarigoldDepthOutput(BaseOutput):
     uncertainty: Union[None, np.ndarray]
 
 
-class MarigoldPipeline(DiffusionPipeline):
+class MurrePipeline(DiffusionPipeline):
     """
-    Pipeline for monocular depth estimation using Marigold: https://marigoldmonodepth.github.io.
+    Pipeline for monocular depth estimation using Murre.
 
     This model inherits from [`DiffusionPipeline`]. Check the superclass documentation for the generic methods the
     library implements for all the pipelines (such as downloading or saving, running on a particular device, etc.)
@@ -162,7 +141,7 @@ class MarigoldPipeline(DiffusionPipeline):
         color_map: str = "Spectral",
         show_progress_bar: bool = True,
         ensemble_kwargs: Dict = None,
-    ) -> MarigoldDepthOutput:
+    ) -> MurreDepthOutput:
         """
         Function invoked when calling the pipeline.
 
@@ -171,8 +150,7 @@ class MarigoldPipeline(DiffusionPipeline):
                 Input RGB (or gray-scale) image.
             denoising_steps (`int`, *optional*, defaults to `None`):
                 Number of denoising diffusion steps during inference. The default value `None` results in automatic
-                selection. The number of steps should be at least 10 with the full Marigold models, and between 1 and 4
-                for Marigold-LCM models.
+                selection.
             ensemble_size (`int`, *optional*, defaults to `10`):
                 Number of predictions to be ensembled.
             processing_res (`int`, *optional*, defaults to `None`):
@@ -200,7 +178,7 @@ class MarigoldPipeline(DiffusionPipeline):
             ensemble_kwargs (`dict`, *optional*, defaults to `None`):
                 Arguments for detailed ensembling settings.
         Returns:
-            `MarigoldDepthOutput`: Output class for Marigold monocular depth prediction pipeline, including:
+            MurreDepthOutput`: Output class for Murre monocular depth prediction pipeline, including:
             - **depth_np** (`np.ndarray`) Predicted depth map, with depth values in the range of [0, 1]
             - **depth_colored** (`PIL.Image.Image`) Colorized depth map, with the shape of [3, H, W] and values in [0, 1], None if `color_map` is `None`
             - **uncertainty** (`None` or `np.ndarray`) Uncalibrated uncertainty(MAD, median absolute deviation)
@@ -335,7 +313,7 @@ class MarigoldPipeline(DiffusionPipeline):
         else:
             depth_colored_img = None
 
-        return MarigoldDepthOutput(
+        return MurreDepthOutput(
             depth_np=depth_pred_metric.clip(0., max_depth),
             depth_colored=depth_colored_img,
             uncertainty=pred_uncert,

@@ -1,23 +1,3 @@
-# Copyright 2023 Bingxin Ke, ETH Zurich. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-# --------------------------------------------------------------------------
-# If you find this code useful, we kindly ask you to cite our paper in your work.
-# Please find bibtex at: https://github.com/prs-eth/Marigold#-citation
-# More information about the method can be found at https://marigoldmonodepth.github.io
-# --------------------------------------------------------------------------
-
-
 import argparse
 import logging
 import os
@@ -28,7 +8,7 @@ import torch
 from PIL import Image
 from tqdm.auto import tqdm
 
-from marigold.marigold_pipeline import MarigoldPipeline
+from murre.pipeline import MurrePipeline
 
 EXTENSION_LIST = [".jpg", ".jpeg", ".png"]
 SDPT_EXTENSION_LIST = [".npz"]
@@ -39,13 +19,13 @@ if "__main__" == __name__:
 
     # -------------------- Arguments --------------------
     parser = argparse.ArgumentParser(
-        description="Run single-image depth estimation using Marigold."
+        description="Run single-image depth estimation using Murre."
     )
     parser.add_argument(
         "--checkpoint",
         type=str,
-        default="prs-eth/marigold-lcm-v1-0",
-        help="Checkpoint path or hub name.",
+        default="ckpt",
+        help="Checkpoint path.",
     )
 
     parser.add_argument(
@@ -256,7 +236,7 @@ if "__main__" == __name__:
         dtype = torch.float32
         variant = None
 
-    pipe: MarigoldPipeline = MarigoldPipeline.from_pretrained(
+    pipe: MurrePipeline = MurrePipeline.from_pretrained(
         checkpoint_path, variant=variant, torch_dtype=dtype
     )
 
