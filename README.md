@@ -57,9 +57,7 @@ Run the Murre model to perform SfM-guided monocular depth estimation:
 ```
 python run.py --checkpoint ${your_ckpt_path} --input_rgb_dir ${your_rgb_path} --input_sdpt_dir ${your_sparse_depth_path} --output_dir ${your_output_path} --denoise_steps 10 --ensemble_size 5 --processing_res ${your_desired_resolution} --max_depth 10.0
 ```
-For ​indoor scenes, we recommend setting `--max_depth=10.0`.
-
-For ​outdoor scenes, consider increasing this value.
+For ​indoor scenes, we recommend setting `--max_depth=10.0`. For ​outdoor scenes, consider increasing this value(for example, 80.0).
 
 To filter unreliable SfM depth estimates, adjust:
 
@@ -80,6 +78,8 @@ python tsdf_fusion.py --image_dir ${your_rgb_path} --depth_dir ${your_depth_path
 ```
 
 Please pass in the depth maps produced by Murre and camera parameters parsed in the first step.
+
+Adjust `--res` to balance reconstruction resolution with performance. Set `--depth_max` to clip depth maps based on your scene type (e.g., lower values for indoor scenes, higher for outdoor).
 
 ## Citation
 
