@@ -14,14 +14,27 @@
 git clone https://github.com/zju3dv/Murre.git
 ```
 
-### Set up the environment
+### Create the environment
 
-You can create a conda environment named 'murre' by running:
 ```
-conda env create -f environment.yml
+conda create -n murre python=3.10
+conda activate murre
+```
+
+### Installing dependencies
+
+```
+conda install cudatoolkit=11.8 pytorch==2.0.1 torchvision=0.15.2 torchtriton=2.0.0 -c pytorch -c nvidia  # use the correct version of cuda for your system
+```
+
+### Installing other requirements
+
+```
+pip install -r requirements.txt
 ```
 
 ## Checkpoint
+
 The pretrained model weights can be downloaded from [here](https://drive.google.com/file/d/1gcThkgOQRmjAxhGJRV7SwzwXKBWP1cDa/view?usp=sharing).
 
 
@@ -42,8 +55,15 @@ The parsed sparse depth maps, camera intrinsics, camera poses will be stored in 
 
 Run the Murre model to perform SfM-guided monocular depth estimation:
 ```
-python run.py --checkpoint ${your_ckpt_path} --input_rgb_dir ${your_rgb_path} --input_sdpt_dir ${your_sparse_depth_path} --output_dir ${your_output_path} --denoise_steps 10 --ensemble_size 5 --processing_res ${your desired resolution}
+python run.py --checkpoint ${your_ckpt_path} --input_rgb_dir ${your_rgb_path} --input_sdpt_dir ${your_sparse_depth_path} --output_dir ${your_output_path} --denoise_steps 10 --ensemble_size 5 --processing_res ${your_desired_resolution} --max_depth 10.0
 ```
+For ​indoor scenes, we recommend setting `--max_depth=10.0`. For ​outdoor scenes, consider increasing this value.
+
+To filter unreliable SfM depth estimates, adjust:
+
+`--err_thr=${your_error_thresh}` (reprojection error threshold)
+`--nviews_thr=${your_nviews_thresh}` (minimum co-visible views)
+This ensures robustness by excluding noisy depth values with high errors or insufficient observations.
 
 Make sure that the same proccesing resolution is used as the first step.
 

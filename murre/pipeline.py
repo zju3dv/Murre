@@ -137,6 +137,7 @@ class MurrePipeline(DiffusionPipeline):
         match_input_res: bool = True,
         resample_method: str = "bilinear",
         batch_size: int = 0,
+        model_dtype = torch.float32,
         generator: Union[torch.Generator, None] = None,
         color_map: str = "Spectral",
         show_progress_bar: bool = True,
@@ -275,6 +276,7 @@ class MurrePipeline(DiffusionPipeline):
                 num_inference_steps=denoising_steps,
                 show_pbar=show_progress_bar,
                 generator=generator,
+                model_dtype=model_dtype
             )
             depth_pred_ls.append(depth_pred_raw.detach())
         depth_preds = torch.concat(depth_pred_ls, dim=0)
@@ -364,6 +366,7 @@ class MurrePipeline(DiffusionPipeline):
         num_inference_steps: int,
         generator: Union[torch.Generator, None],
         show_pbar: bool,
+        model_dtype=torch.float32
     ) -> torch.Tensor:
         """
         Perform an individual depth prediction without ensembling.
@@ -381,9 +384,9 @@ class MurrePipeline(DiffusionPipeline):
             `torch.Tensor`: Predicted depth map.
         """
         device = self.device
-        rgb_in = rgb_in.to(device)
-        idpt_in = idpt_in.to(device)
-        dist_in = dist_in.to(device)
+        rgb_in = rgb_in.to(device).to(model_dtype)
+        idpt_in = idpt_in.to(device).to(model_dtype)
+        dist_in = dist_in.to(device).to(model_dtype)
 
         # Set timesteps
         self.scheduler.set_timesteps(num_inference_steps, device=device)

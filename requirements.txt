@@ -1,0 +1,15 @@
+pip==23.2.1
+numpy==1.26.0
+opencv-python==4.8.0.76
+tqdm==4.66.1
+trimesh==4.0.2
+pillow==11.1.0
+matplotlib==3.8.3
+trimesh==4.0.2
+scikit-learn==1.4.1.post1
+diffusers==0.27.2
+transformers==4.39.1
+scipy==1.11.2
+typing-extensions==4.10.0
+huggingface_hub==0.25.0
+open3d==0.18.0

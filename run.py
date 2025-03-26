@@ -296,6 +296,7 @@ if "__main__" == __name__:
                 ensemble_size=ensemble_size,
                 processing_res=processing_res,
                 batch_size=batch_size,
+                model_dtype=dtype,
                 color_map=color_map,
                 show_progress_bar=True,
                 resample_method=resample_method,
