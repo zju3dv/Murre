@@ -57,12 +57,16 @@ Run the Murre model to perform SfM-guided monocular depth estimation:
 ```
 python run.py --checkpoint ${your_ckpt_path} --input_rgb_dir ${your_rgb_path} --input_sdpt_dir ${your_sparse_depth_path} --output_dir ${your_output_path} --denoise_steps 10 --ensemble_size 5 --processing_res ${your_desired_resolution} --max_depth 10.0
 ```
-For ​indoor scenes, we recommend setting `--max_depth=10.0`. For ​outdoor scenes, consider increasing this value.
+For ​indoor scenes, we recommend setting `--max_depth=10.0`.
+
+For ​outdoor scenes, consider increasing this value.
 
 To filter unreliable SfM depth estimates, adjust:
 
 `--err_thr=${your_error_thresh}` (reprojection error threshold)
+
 `--nviews_thr=${your_nviews_thresh}` (minimum co-visible views)
+
 This ensures robustness by excluding noisy depth values with high errors or insufficient observations.
 
 Make sure that the same proccesing resolution is used as the first step.
