@@ -40,6 +40,34 @@ The pretrained model weights can be downloaded from [here](https://drive.google.
 
 ## Inference
 
+### Get SfM output
+
+1. Extract features from input images using colmap:
+
+```bash
+colmap feature_extractor \
+    --database_path ${your_database_path} \
+    --image_path ${your_image_path} \
+    --ImageReader.camera_model PINHOLE
+```
+
+2. Match extracted features using vocab tree matcher
+
+```bash
+colmap vocab_tree_matcher \
+    --database_path ${your_database_path} \
+    --VocabTreeMatching.vocab_tree_path ${your_vocabtree_path}
+```
+
+3. 
+
+```bash
+colmap mapper \            
+    --database_path ${your_database_path} \
+    --image_path ${your_image_path} \
+    --output_path ${your_output_path}
+```
+
 ### Parse SfM output
 
 ```
@@ -80,6 +108,14 @@ python tsdf_fusion.py --image_dir ${your_rgb_path} --depth_dir ${your_depth_path
 Please pass in the depth maps produced by Murre and camera parameters parsed in the first step.
 
 Adjust `--res` to balance reconstruction resolution with performance. Set `--depth_max` to clip depth maps based on your scene type (e.g., lower values for indoor scenes, higher for outdoor).
+
+### Evaluation
+
+Run the following to get the chamfer distance between GT point clouds and generated point clouds:
+
+```bash
+python eval.py --data_dir ${your_data_path} --gt_dir ${gt_path} --data_mode ${your_data_mode(mesh/pcd)} --gt_mode ${gt_mode(mesh/pcd)}
+```
 
 ## Citation
 
