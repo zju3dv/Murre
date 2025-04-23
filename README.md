@@ -59,7 +59,7 @@ colmap vocab_tree_matcher \
     --VocabTreeMatching.vocab_tree_path ${your_vocabtree_path}
 ```
 
-3. 
+3. Generate sparse point clouds
 
 ```bash
 colmap mapper \            
@@ -111,7 +111,7 @@ Adjust `--res` to balance reconstruction resolution with performance. Set `--dep
 
 ### Evaluation
 
-Run the following to get the chamfer distance between GT point clouds and generated point clouds:
+Run the following to evaluate the chamfer distance between GT point clouds and generated point clouds:
 
 ```bash
 python eval.py --data_dir ${your_data_path} --gt_dir ${gt_path} --data_mode ${your_data_mode(mesh/pcd)} --gt_mode ${gt_mode(mesh/pcd)}

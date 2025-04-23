@@ -5,7 +5,6 @@ from tqdm import tqdm
 from scipy.io import loadmat
 import multiprocessing as mp
 import argparse
-import os
 
 def sample_single_tri(input_):
     n1, n2, v1, v2, tri_vert = input_
@@ -18,7 +17,7 @@ def sample_single_tri(input_):
     q = v1 * k[:,:1] + v2 * k[:,1:] + tri_vert
     return q
 
-def get_point_cloud(data_dir, data_mode):
+def get_point_cloud(data_dir, data_mode, thresh):
     if data_mode == 'mesh':
         data_mesh = o3d.io.read_triangle_mesh(data_dir)
 
@@ -63,16 +62,19 @@ if __name__ == '__main__':
     parser.add_argument('--gt_dir', type=str, help='path to the gt')
     parser.add_argument('--data_mode', type=str, default='mesh', choices=['mesh', 'pcd'])
     parser.add_argument('--gt_mode', type=str, default='mesh', choices=['mesh', 'pcd'])
-    parser.add_argument('--downsample_density', type=float, default=0.2)
-    parser.add_argument('--max_dist', type=float, default=20)
+    parser.add_argument('--data_downsample_density', type=float, default=0.1)
+    parser.add_argument('--gt_downsample_density', type=float, default=2.0)
+    parser.add_argument('--max_dist', type=float, default=500)
     args = parser.parse_args()
 
-    thresh = args.downsample_density
+    thresh_data = args.data_downsample_density
+    thresh_gt = args.gt_downsample_density
     
-    pbar = tqdm(total=7)
+    pbar = tqdm(total=8)
     pbar.update(1)
     pbar.set_description(f'get data from {args.data_mode}')
-    data_pcd = get_point_cloud(args.data_dir, args.data_mode)
+    data_pcd = get_point_cloud(args.data_dir, args.data_mode, thresh_data)
+    print("data_pcd.shape: ", data_pcd.shape)
 
     pbar.update(1)
     pbar.set_description('random shuffle pcd index')
@@ -80,24 +82,39 @@ if __name__ == '__main__':
     shuffle_rng.shuffle(data_pcd, axis=0)
 
     pbar.update(1)
-    pbar.set_description('downsample pcd')
-    nn_engine = skln.NearestNeighbors(n_neighbors=1, radius=thresh, algorithm='kd_tree', n_jobs=-1)
+    pbar.set_description('downsample data pcd')
+    nn_engine = skln.NearestNeighbors(n_neighbors=1, radius=thresh_data, algorithm='kd_tree', n_jobs=-1)
     nn_engine.fit(data_pcd)
-    rnn_idxs = nn_engine.radius_neighbors(data_pcd, radius=thresh, return_distance=False)
+    rnn_idxs = nn_engine.radius_neighbors(data_pcd, radius=thresh_data, return_distance=False)
     mask = np.ones(data_pcd.shape[0], dtype=np.bool_)
     for curr, idxs in enumerate(rnn_idxs):
         if mask[curr]:
             mask[idxs] = 0
             mask[curr] = 1
     data_down = data_pcd[mask]
+    print("data_down.shape: ", data_down.shape)
 
     pbar.update(1)
     pbar.set_description('read GT pcd')
-    stl = get_point_cloud(args.gt_dir, args.gt_mode)
+    stl = get_point_cloud(args.gt_dir, args.gt_mode, thresh_gt)
+    print("stl.shape: ", stl.shape)
+
+    pbar.update(1)
+    pbar.set_description('downsample gt pcd')
+    nn_engine = skln.NearestNeighbors(n_neighbors=1, radius=thresh_gt, algorithm='kd_tree', n_jobs=-1)
+    nn_engine.fit(stl)
+    rnn_idxs = nn_engine.radius_neighbors(stl, radius=thresh_gt, return_distance=False)
+    mask = np.ones(stl.shape[0], dtype=np.bool_)
+    for curr, idxs in enumerate(rnn_idxs):
+        if mask[curr]:
+            mask[idxs] = 0
+            mask[curr] = 1
+    stl_down = stl[mask]
+    print("stl_down.shape: ", stl_down.shape)
 
     pbar.update(1)
     pbar.set_description('compute data2GT')
-    nn_engine.fit(stl)
+    nn_engine.fit(stl_down)
     dist_d2s, idx_d2s = nn_engine.kneighbors(data_down, n_neighbors=1, return_distance=True)
     max_dist = args.max_dist
     mean_d2s = dist_d2s[dist_d2s < max_dist].mean()
@@ -105,7 +122,7 @@ if __name__ == '__main__':
     pbar.update(1)
     pbar.set_description('compute GT2data')
     nn_engine.fit(data_down)
-    dist_s2d, idx_s2d = nn_engine.kneighbors(stl, n_neighbors=1, return_distance=True)
+    dist_s2d, idx_s2d = nn_engine.kneighbors(stl_down, n_neighbors=1, return_distance=True)
     mean_s2d = dist_s2d[dist_s2d < max_dist].mean()
 
     pbar.update(1)
@@ -116,6 +133,8 @@ if __name__ == '__main__':
     print('+'+'-'*40+'+')
     print('|{:^40}|'.format('Chamfer Distance Evaluation Result'))
     print('+'+'-'*40+'+')
+    print('|{:^40}|'.format('MaxDist data2GT: {:.6f}'.format(dist_d2s.max())))
+    print('|{:^40}|'.format('MaxDist GT2data: {:.6f}'.format(dist_s2d.max())))
     print('|{:^40}|'.format('data2GT: {:.6f}'.format(mean_d2s)))
     print('|{:^40}|'.format('GT2data: {:.6f}'.format(mean_s2d)))
     print('|{:^40}|'.format('overall: {:.6f}'.format(over_all)))
