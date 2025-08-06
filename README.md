@@ -81,6 +81,10 @@ Please pass in the depth maps produced by Murre and camera parameters parsed in 
 
 Adjust `--res` to balance reconstruction resolution with performance. Set `--depth_max` to clip depth maps based on your scene type (e.g., lower values for indoor scenes, higher for outdoor).
 
+## Evaluation
+
+Please refer to [here](./EVAL.md).
+
 ## Citation
 
 If you find this code useful for your research, please use the following BibTeX entry.
