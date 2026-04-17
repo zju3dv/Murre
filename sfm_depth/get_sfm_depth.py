@@ -7,13 +7,17 @@ from colmap_util import read_model, get_intrinsics, get_hws, get_extrinsic
 
 def get_rescale_crop_tgthw(original_res, processing_res):
     original_height, original_width = original_res
-    downscale_factor = min(
-        processing_res / original_width, processing_res / original_height
-    )
+
+    downscale_factor = 1.0
+    if processing_res > 0:
+        downscale_factor = min(
+            processing_res / original_width, processing_res / original_height
+        )
+        
     new_width = int(original_width * downscale_factor)
     new_height = int(original_height * downscale_factor)
-    crop_h = new_height - new_height % 16
-    crop_w = new_width - new_width % 16
+    crop_h = new_height - new_height % 8 #16
+    crop_w = new_width - new_width % 8 #16
     return downscale_factor, crop_h, crop_w, new_height, new_width
 
 
@@ -84,6 +88,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "--processing_res",
         type=int,
+        default=768,
         help="Maximum resolution of processing. 0 for using input image resolution. Default: 768.",
     )
 

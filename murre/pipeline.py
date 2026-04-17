@@ -218,12 +218,11 @@ class MurrePipeline(DiffusionPipeline):
         sdpt = input_sparse_depth
 
         # Resize image
-        if processing_res > 0:
-            rgb = resize_max_res(
-                rgb,
-                max_edge_resolution=processing_res,
-                resample_method=resample_method,
-            )
+        rgb = resize_max_res(
+            rgb,
+            max_edge_resolution=processing_res,
+            resample_method=resample_method,
+        )
 
         # Normalize rgb values
         rgb_norm: torch.Tensor = rgb / 255.0 * 2.0 - 1.0  #  [0, 255] -> [-1, 1]
@@ -231,6 +230,7 @@ class MurrePipeline(DiffusionPipeline):
         assert rgb_norm.min() >= -1.0 and rgb_norm.max() <= 1.0
 
         # ----------------- Sparse Depth Preprocess -----------------
+        logging.info(f"sdpt.shape {sdpt.shape} & rgb.shape[2:] {rgb.shape[2:]}")
         assert sdpt.shape == rgb.shape[2:]
         # Normalize depth
         sdpt_norm, d_min, d_max = normalize_depth(sdpt, pre_clip_max=max_depth)

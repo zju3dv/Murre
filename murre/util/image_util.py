@@ -77,16 +77,19 @@ def resize_max_res(
     assert 4 == img.dim(), f"Invalid input shape {img.shape}"
 
     original_height, original_width = img.shape[-2:]
-    downscale_factor = min(
-        max_edge_resolution / original_width, max_edge_resolution / original_height
-    )
+
+    downscale_factor = 1.0
+    if max_edge_resolution > 0:
+        downscale_factor = min(
+            max_edge_resolution / original_width, max_edge_resolution / original_height
+        )
 
     new_width = int(original_width * downscale_factor)
     new_height = int(original_height * downscale_factor)
 
     resized_img = resize(img, (new_height, new_width), resample_method, antialias=True)
-    crop_h = new_height - new_height % 16
-    crop_w = new_width - new_width % 16
+    crop_h = new_height - new_height % 8 #16
+    crop_w = new_width - new_width % 8 #16
 
     resized_img = resized_img.squeeze().permute(1, 2, 0)[:crop_h, :crop_w, :]
     resized_img = resized_img.permute(2, 0, 1).unsqueeze(0)
