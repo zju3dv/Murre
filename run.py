@@ -14,6 +14,19 @@ EXTENSION_LIST = [".jpg", ".jpeg", ".png"]
 SDPT_EXTENSION_LIST = [".npz"]
 
 
+def stem(p):
+    return os.path.splitext(os.path.basename(p))[0]
+
+def filter_common_files(set1, set2):
+    stems2 = {stem(p) for p in set2}
+    filtered1 = [p for p in set1 if stem(p) in stems2]
+
+    stems1 = {stem(p) for p in set1}
+    filtered2 = [p for p in set2 if stem(p) in stems1]
+
+    return filtered1, filtered2
+
+
 if "__main__" == __name__:
     logging.basicConfig(level=logging.INFO)
 
@@ -43,7 +56,10 @@ if "__main__" == __name__:
     )
 
     parser.add_argument(
-        "--output_dir", type=str, required=True, help="Output directory."
+        "--output_dir", 
+        type=str, 
+        required=True, 
+        help="Output directory."
     )
 
     # inference setting
@@ -208,22 +224,21 @@ if "__main__" == __name__:
         f for f in rgb_filename_list if os.path.splitext(f)[1].lower() in EXTENSION_LIST
     ]
     rgb_filename_list = sorted(rgb_filename_list)
-    n_images = len(rgb_filename_list)
-    if n_images > 0:
-        logging.info(f"Found {n_images} images")
-    else:
-        logging.error(f"No image found in '{input_rgb_dir}'")
-        exit(1)
+
     # sparse depth
     sdpt_filename_list = glob(os.path.join(input_sdpt_dir, "*"))
     sdpt_filename_list = [
         f for f in sdpt_filename_list if os.path.splitext(f)[1].lower() in SDPT_EXTENSION_LIST
     ]
     sdpt_filename_list = sorted(sdpt_filename_list)
-    if not len(sdpt_filename_list) == n_images:
-        logging.error(f'Number of sparse depth maps({len(sdpt_filename_list)}) is not the same as that of images({n_images})')
+
+    rgb_filename_list, sdpt_filename_list = filter_common_files(rgb_filename_list, sdpt_filename_list)
+    n_images = len(rgb_filename_list)
+    if n_images > 0:
+        logging.info(f"Matched {n_images} RGB images.")
+    else:
+        logging.error(f"No image matched between '{input_rgb_dir}' and '{input_sdpt_dir}'")
         exit(1)
-    
 
     # -------------------- Model --------------------
     if half_precision:

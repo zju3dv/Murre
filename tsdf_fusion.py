@@ -63,7 +63,7 @@ if __name__ == '__main__':
     for image_file in image_files:
         img = cv2.imread(os.path.join(image_dir, image_file))
         img = cv2.resize(img, (w, h))
-        crop_h, crop_w = h - h % 16, w - w % 16
+        crop_h, crop_w = h - h % 8, w - w % 8 #16
         img = img[:crop_h, :crop_w, :]
         imgs.append(img)
 
